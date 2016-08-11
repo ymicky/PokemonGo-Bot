@@ -264,6 +264,9 @@ namespace PokemonGo.RocketAPI.Console
                         case 29:
                             checkBox16.Checked = bool.Parse(line);
                             break;
+                        case 30:
+                            textBox26.Text = line;
+                            break;
                         default:
                             TextBox temp = (TextBox)Controls.Find("textBox" + tb, true).FirstOrDefault();
                             temp.Text = line;
@@ -637,6 +640,15 @@ namespace PokemonGo.RocketAPI.Console
                 Globals.ivmaxpercent = int.Parse(textBox24.Text);
             }
 
+            if (textBox26.Text == string.Empty)
+            {
+                textBox26.BackColor = Color.Red;
+            } else {
+                int x = int.Parse(textBox26.Text);
+                decimal c = ((decimal)x / 100);
+                Globals.razzberry_chance = Convert.ToDouble(c);
+            }
+
             Globals.gerNames = checkBox8.Checked;
             Globals.useincense = checkBox9.Checked;
             Globals.pokeList = checkBox10.Checked;
@@ -668,7 +680,7 @@ namespace PokemonGo.RocketAPI.Console
                 else
                     Globals.doEvolve.Add((PokemonId)Enum.Parse(typeof(PokemonId), pokemon));
             }
-
+            
             string[] accFile = {
                     Globals.acc.ToString(),
                     Globals.username,
@@ -699,7 +711,8 @@ namespace PokemonGo.RocketAPI.Console
                     Globals.useBasicIncubators.ToString(),
                     Globals.TransferFirstLowIV.ToString(),
                     Globals.settingsLanguage,
-                    Globals.userazzberry.ToString()
+                    Globals.userazzberry.ToString(),
+                    Convert.ToInt16(Globals.razzberry_chance * 100).ToString()
             };
             File.WriteAllLines(@Program.account, accFile);
 
@@ -1018,10 +1031,17 @@ namespace PokemonGo.RocketAPI.Console
             if (clicked != null)
             {
                 // I have used the tag field of the button to save the language key
-                langSelected = (string)clicked.Tag;
+                langSelected = (string)clicked.Tag; 
                 if (!string.IsNullOrWhiteSpace(langSelected))
                 {
-                    TranslationHandler.SelectLangauge(langSelected);
+                    if (langSelected == "en")
+                    {
+                        TranslationHandler.SelectLangauge(null);
+                    }
+                    else
+                    {
+                        TranslationHandler.SelectLangauge(langSelected);
+                    }
                     load_lang();
                 }
                 else
